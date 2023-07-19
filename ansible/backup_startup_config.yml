@@ -1,0 +1,16 @@
+---
+- name: Respaldar configuración de startup-config
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Respaldar configuración
+      ios_command:
+        commands:
+          - show startup-config
+      register: config_output
+
+    - name: Guardar salida en archivo
+      copy:
+        content: "{{ config_output.stdout[0] }}"
+        dest: backup_startup_config.txt

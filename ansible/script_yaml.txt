@@ -1,0 +1,43 @@
+---
+- name: Configurar interfaces y OSPF
+  hosts: CSR1000v  
+  gather_facts: false
+
+  tasks:
+    - name: Configurar interfaz Loopback10
+      ios_command:
+        commands:
+          - configure terminal
+          - interface Loopback10
+          - ip address 192.168.100.1 255.255.255.0
+          - ip ospf network point-to-point
+          - description MATIAS_CATALDO
+
+    - name: Configurar OSPF
+      ios_command:
+        commands:
+          - configure terminal
+          - router ospf 10
+          - router-id 10.255.255.1
+          - network 10.255.255.1 0.0.0.0 area 0
+          - network 192.168.100.0 0.0.0.255 area 0
+
+    - name: Mostrar rutas OSPF
+      ios_command:
+        commands:
+          - show ip route ospf
+
+    - name: Mostrar vecinos OSPF
+      ios_command:
+        commands:
+          - show ip ospf neighbor
+
+    - name: Mostrar protocolos IP
+      ios_command:
+        commands:
+          - show ip protocols
+
+    - name: Guardar configuración en archivo
+      ios_command:
+        commands:
+          - copy running-config backup_matias_cataldo.txt
